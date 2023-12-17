@@ -1,4 +1,3 @@
-// Settings.js
 import { StatusBar } from 'expo-status-bar'
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
@@ -10,6 +9,7 @@ import {
 	loadAdditionalSettings,
 	saveAdditionalSettings
 } from './TimerSettingsStorage'
+import { debounce } from 'lodash'
 
 const generateMockData = count => {
 	const mockData = []
@@ -31,7 +31,7 @@ const MOCK_DATA = generateMockData(100)
 const MOCK_DATA2 = generateMockData2(15)
 
 export default function Settings() {
-	const [workTime, setWorkTime] = useState(25)
+	const [workTime, setWorkTime] = useState(30)
 	const [restTime, setRestTime] = useState(5)
 	const [bigRestTime, setBigRestTime] = useState(15)
 	const [sessionCount, setSessionCount] = useState(5)
@@ -71,10 +71,17 @@ export default function Settings() {
 		}
 	}
 
+	const debouncedSaveSettings = debounce(saveSettings, 1000) // задержка в миллисекундах
+
 	useEffect(() => {
 		// Загружаем и сохраняем настройки при монтировании и обновлении компонента
 		loadSettings()
-		saveSettings()
+	}, [])
+
+	useEffect(() => {
+		// Сохраняем настройки с использованием debounce
+		debouncedSaveSettings()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [workTime, restTime, bigRestTime, sessionCount])
 
 	return (

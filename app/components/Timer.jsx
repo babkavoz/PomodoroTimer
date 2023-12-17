@@ -1,59 +1,87 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
-import { loadTimerSettings, saveTimerSettings } from './TimerSettingsStorage' // Импортируем функции из вашего файла
+import {
+	loadTimerSettings,
+	saveTimerSettings,
+	loadAdditionalSettings,
+	saveAdditionalSettings
+} from './TimerSettingsStorage'
 
 export default function Timer() {
 	const [workTime, setWorkTime] = useState(30)
 	const [restTime, setRestTime] = useState(5)
 	const [bigRestTime, setBigRestTime] = useState(15)
 	const [sessionCount, setSessionCount] = useState(5)
+	const [updateSettings, setUpdateSettings] = useState(0)
 
-	// Загрузка данных из AsyncStorage
+	const [totalWorkTime, setTotalWorkTime] = useState(0)
+	const [isPlaying, setIsPlaying] = useState(false)
+	const [isWorkTime, setIsWorkTime] = useState(true)
+	const [currentSession, setCurrentSession] = useState(3)
+
 	const loadSettings = async () => {
 		try {
-			const timerSettings = await loadTimerSettings() // Используем функцию из timersettingssorage.js
+			const timerSettings = await loadTimerSettings()
+			console.log(timerSettings)
 			if (timerSettings) {
 				setWorkTime(timerSettings.workTime)
 				setRestTime(timerSettings.restTime)
 				setBigRestTime(timerSettings.bigRestTime)
 				setSessionCount(timerSettings.sessionCount)
+				setTotalWorkTime(timerSettings.totalWorkTime)
+				setIsPlaying(timerSettings.isPlaying)
+				setIsWorkTime(timerSettings.isWorkTime)
+				setCurrentSession(timerSettings.currentSession)
+			}
+			const timerSettings2 = await loadAdditionalSettings()
+			console.log(timerSettings)
+			if (timerSettings) {
+				setTotalWorkTime(timerSettings2.totalWorkTime)
+				setIsPlaying(timerSettings2.isPlaying)
+				setIsWorkTime(timerSettings2.isWorkTime)
+				setCurrentSession(timerSettings2.currentSession)
 			}
 		} catch (error) {
 			console.error('Error loading settings:', error)
 		}
 	}
 
-	// Сохранение данных в AsyncStorage
 	const saveSettings = async () => {
 		try {
 			const settingsToSave = {
-				workTime: workTime,
-				restTime: restTime,
-				bigRestTime: bigRestTime,
-				sessionCount: sessionCount
+				workTime,
+				restTime,
+				bigRestTime,
+				sessionCount,
+				totalWorkTime,
+				isPlaying,
+				isWorkTime,
+				currentSession
 			}
-			await saveTimerSettings(settingsToSave) // Используем функцию из timersettingssorage.js
+			await saveTimerSettings(settingsToSave)
 		} catch (error) {
 			console.error('Error saving settings:', error)
 		}
 	}
 
 	useEffect(() => {
-		// Загружаем настройки при монтировании компонента
 		loadSettings()
-	}, [])
+	}, [updateSettings])
 
 	useEffect(() => {
-		// Сохраняем настройки при изменении переменных
 		saveSettings()
-	}, [workTime, restTime, bigRestTime, sessionCount])
-
-	const [totalWorkTime, setTotalWorkTime] = useState(0)
-	const [isPlaying, setIsPlaying] = useState(false)
-	const [isWorkTime, SetIsWorkTime] = useState(true)
-	const [currentSession, setCurrentSession] = useState(3)
+	}, [
+		workTime,
+		restTime,
+		bigRestTime,
+		sessionCount,
+		totalWorkTime,
+		isPlaying,
+		isWorkTime,
+		currentSession
+	])
 
 	const [key, setKey] = useState(0)
 
@@ -66,6 +94,7 @@ export default function Timer() {
 			return styles.circleNotReady
 		}
 	}
+
 	const nextTime = () => {
 		if (isWorkTime) setTotalWorkTime(totalWorkTime + workTime)
 		if (currentSession == sessionCount && !isWorkTime) {
@@ -73,14 +102,18 @@ export default function Timer() {
 		} else if (!isWorkTime) {
 			setCurrentSession(currentSession + 1)
 		}
-		SetIsWorkTime(!isWorkTime)
+		setIsWorkTime(!isWorkTime)
 		setIsPlaying(false)
-
 		setKey(prevKey => prevKey + 1)
 	}
+
 	return (
 		<View>
 			<View style={styles.container}>
+				<Button
+					title='Обновить'
+					onPress={() => setUpdateSettings(prev => prev + 1)}
+				/>
 				<Text>
 					{'Total Work time ' + Math.round(totalWorkTime / 60) + ' minutes'}
 				</Text>
@@ -127,8 +160,9 @@ export default function Timer() {
 			</View>
 			<View style={styles.container}>
 				<TouchableOpacity
-					onPress={() => {
+					onPress={async () => {
 						setCurrentSession(1)
+						setIsWorkTime(true)
 						setIsPlaying(false)
 					}}
 				>
