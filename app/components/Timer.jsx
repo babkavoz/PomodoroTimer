@@ -1,17 +1,60 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
+import { loadTimerSettings, saveTimerSettings } from './TimerSettingsStorage' // Импортируем функции из вашего файла
 
 export default function Timer() {
-	const workTime = 10
-	const restTime = 5
-	const bigRestTime = 15
+	const [workTime, setWorkTime] = useState(30)
+	const [restTime, setRestTime] = useState(5)
+	const [bigRestTime, setBigRestTime] = useState(15)
+	const [sessionCount, setSessionCount] = useState(5)
+
+	// Загрузка данных из AsyncStorage
+	const loadSettings = async () => {
+		try {
+			const timerSettings = await loadTimerSettings() // Используем функцию из timersettingssorage.js
+			if (timerSettings) {
+				setWorkTime(timerSettings.workTime)
+				setRestTime(timerSettings.restTime)
+				setBigRestTime(timerSettings.bigRestTime)
+				setSessionCount(timerSettings.sessionCount)
+			}
+		} catch (error) {
+			console.error('Error loading settings:', error)
+		}
+	}
+
+	// Сохранение данных в AsyncStorage
+	const saveSettings = async () => {
+		try {
+			const settingsToSave = {
+				workTime: workTime,
+				restTime: restTime,
+				bigRestTime: bigRestTime,
+				sessionCount: sessionCount
+			}
+			await saveTimerSettings(settingsToSave) // Используем функцию из timersettingssorage.js
+		} catch (error) {
+			console.error('Error saving settings:', error)
+		}
+	}
+
+	useEffect(() => {
+		// Загружаем настройки при монтировании компонента
+		loadSettings()
+	}, [])
+
+	useEffect(() => {
+		// Сохраняем настройки при изменении переменных
+		saveSettings()
+	}, [workTime, restTime, bigRestTime, sessionCount])
+
 	const [totalWorkTime, setTotalWorkTime] = useState(0)
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [isWorkTime, SetIsWorkTime] = useState(true)
 	const [currentSession, setCurrentSession] = useState(3)
-	const [sessionCount, setSessionCount] = useState(5)
+
 	const [key, setKey] = useState(0)
 
 	const chooseCircleStyle = (index, currentSession) => {
