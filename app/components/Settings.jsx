@@ -85,7 +85,7 @@ export default function Settings() {
 					currentValue={workTime}
 					extraData={workTime}
 					list={MOCK_DATA}
-					onValueChange={setWorkTime}
+					onItemPress={setWorkTime}
 					labelColor='blue'
 					separatorColor='white'
 					selectedColor='red'
@@ -97,7 +97,7 @@ export default function Settings() {
 					currentValue={restTime}
 					extraData={restTime}
 					list={MOCK_DATA}
-					onValueChange={setRestTime}
+					onItemPress={setRestTime}
 					labelColor='blue'
 					separatorColor='white'
 					selectedColor='red'
@@ -109,7 +109,7 @@ export default function Settings() {
 					currentValue={bigRestTime}
 					extraData={bigRestTime}
 					list={MOCK_DATA}
-					onValueChange={setBigRestTime}
+					onItemPress={setBigRestTime}
 					labelColor='blue'
 					separatorColor='white'
 					selectedColor='red'
@@ -121,7 +121,7 @@ export default function Settings() {
 					currentValue={sessionCount}
 					extraData={sessionCount}
 					list={MOCK_DATA2}
-					onValueChange={setSessionCount}
+					onItemPress={setSessionCount}
 					labelColor='blue'
 					separatorColor='white'
 					selectedColor='red'
