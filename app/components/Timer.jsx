@@ -1,12 +1,11 @@
+// Timer.js
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 import {
-	loadTimerSettings,
-	saveTimerSettings,
-	loadAdditionalSettings,
-	saveAdditionalSettings
+	getMultipleItemsFromStorage,
+	setTimerSettings
 } from './TimerSettingsStorage'
 
 export default function Timer() {
@@ -20,11 +19,11 @@ export default function Timer() {
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [isWorkTime, setIsWorkTime] = useState(true)
 	const [currentSession, setCurrentSession] = useState(3)
-
-	const loadSettings = async () => {
+	/*
+	const loadSettingsData = async () => {
 		try {
-			const timerSettings = await loadTimerSettings()
-			console.log(timerSettings)
+			const timerSettings = await loadSettings()
+
 			if (timerSettings) {
 				setWorkTime(timerSettings.workTime)
 				setRestTime(timerSettings.restTime)
@@ -35,20 +34,12 @@ export default function Timer() {
 				setIsWorkTime(timerSettings.isWorkTime)
 				setCurrentSession(timerSettings.currentSession)
 			}
-			const timerSettings2 = await loadAdditionalSettings()
-			console.log(timerSettings)
-			if (timerSettings) {
-				setTotalWorkTime(timerSettings2.totalWorkTime)
-				setIsPlaying(timerSettings2.isPlaying)
-				setIsWorkTime(timerSettings2.isWorkTime)
-				setCurrentSession(timerSettings2.currentSession)
-			}
 		} catch (error) {
-			console.error('Error loading settings:', error)
+			console.error('[MY_APP] Error loading settings:', error)
 		}
 	}
 
-	const saveSettings = async () => {
+	const saveSettingsData = async () => {
 		try {
 			const settingsToSave = {
 				workTime,
@@ -60,18 +51,18 @@ export default function Timer() {
 				isWorkTime,
 				currentSession
 			}
-			await saveTimerSettings(settingsToSave)
+			await saveSettings({ timerSettings: settingsToSave })
 		} catch (error) {
-			console.error('Error saving settings:', error)
+			console.error('[MY_APP] Error saving settings:', error)
 		}
 	}
 
 	useEffect(() => {
-		loadSettings()
+		loadSettingsData()
 	}, [updateSettings])
 
 	useEffect(() => {
-		saveSettings()
+		saveSettingsData()
 	}, [
 		workTime,
 		restTime,
@@ -82,7 +73,7 @@ export default function Timer() {
 		isWorkTime,
 		currentSession
 	])
-
+	*/
 	const [key, setKey] = useState(0)
 
 	const chooseCircleStyle = (index, currentSession) => {
@@ -97,7 +88,7 @@ export default function Timer() {
 
 	const nextTime = () => {
 		if (isWorkTime) setTotalWorkTime(totalWorkTime + workTime)
-		if (currentSession == sessionCount && !isWorkTime) {
+		if (currentSession === sessionCount && !isWorkTime) {
 			setCurrentSession(1)
 		} else if (!isWorkTime) {
 			setCurrentSession(currentSession + 1)
@@ -125,7 +116,7 @@ export default function Timer() {
 					duration={
 						isWorkTime
 							? workTime
-							: currentSession == sessionCount
+							: currentSession === sessionCount
 							? bigRestTime
 							: restTime
 					}
@@ -146,7 +137,7 @@ export default function Timer() {
 								<Text styles={styles.ClockText}>
 									{isWorkTime
 										? 'Work'
-										: currentSession == sessionCount
+										: currentSession === sessionCount
 										? 'Big rest'
 										: 'Rest'}
 								</Text>

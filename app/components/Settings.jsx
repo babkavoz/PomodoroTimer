@@ -1,15 +1,14 @@
+// settings.js
 import { StatusBar } from 'expo-status-bar'
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Button } from 'react-native'
 import { ScrollPicker } from 'react-native-value-picker'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import {
-	loadTimerSettings,
-	saveTimerSettings,
-	loadAdditionalSettings,
-	saveAdditionalSettings
-} from './TimerSettingsStorage'
-import { debounce } from 'lodash'
+	setMultipleItems,
+	getMultipleItems,
+	clearStorage,
+	getAllData
+} from './TimerSettingsStorage' // Замените на имя вашего файла с кодом
 
 const generateMockData = count => {
 	const mockData = []
@@ -31,66 +30,82 @@ const MOCK_DATA = generateMockData(100)
 const MOCK_DATA2 = generateMockData2(15)
 
 export default function Settings() {
-	const [workTime, setWorkTime] = useState(30)
+	const [workTime, setWorkTime] = useState(5)
 	const [restTime, setRestTime] = useState(5)
-	const [bigRestTime, setBigRestTime] = useState(15)
+	const [bigRestTime, setBigRestTime] = useState(5)
 	const [sessionCount, setSessionCount] = useState(5)
 
-	const loadSettings = async () => {
+	const someAsyncFunction = async () => {
 		try {
-			const timerSettings = await loadTimerSettings()
-			const additionalSettings = await loadAdditionalSettings()
+			console.log('начало someAsyncFunction')
+			await loadSettingsData()
+			// Здесь будет выполнен код после завершения loadSettingsData
+			console.log('loadSettingsData выполнена')
+			// Другой код, который вы хотите выполнить после loadSettingsData
+		} catch (error) {
+			console.error('Произошла ошибка:', error)
+		}
+	}
 
+	const loadSettingsData = async () => {
+		try {
+			const timerSettings = await getMultipleItems([
+				'workTime',
+				'restTime',
+				'bigRestTime',
+				'sessionCount'
+			])
+			console.log('loadsettingsdata получила вот что', timerSettings)
 			if (timerSettings) {
-				setWorkTime(timerSettings.workTime)
-				setRestTime(timerSettings.restTime)
-				setBigRestTime(timerSettings.bigRestTime)
-				setSessionCount(timerSettings.sessionCount)
-			}
-
-			if (additionalSettings) {
-				// Обработка загрузки дополнительных настроек
+				setWorkTime(timerSettings[0].value)
+				setRestTime(timerSettings[1].value)
+				setBigRestTime(timerSettings[2].value)
+				setSessionCount(timerSettings[3].value)
+				console.log('result', workTime, restTime, bigRestTime, sessionCount)
 			}
 		} catch (error) {
 			console.error('Error loading settings:', error)
 		}
 	}
 
-	const saveSettings = async () => {
+	const saveSettingsData = async () => {
 		try {
-			const timerSettings = {
-				workTime,
-				restTime,
-				bigRestTime,
-				sessionCount
-			}
-			await saveTimerSettings(timerSettings)
-			// Сохранение дополнительных настроек, если они есть
+			const settingsToSave = [
+				{ key: 'workTime', value: workTime },
+				{ key: 'restTime', value: restTime },
+				{ key: 'bigRestTime', value: bigRestTime },
+				{ key: 'sessionCount', value: sessionCount }
+			]
+			await setMultipleItems(settingsToSave)
 		} catch (error) {
-			console.error('Error saving settings:', error)
+			console.error('Error saving timer settings:', error)
 		}
 	}
 
-	const debouncedSaveSettings = debounce(saveSettings, 1000) // задержка в миллисекундах
+	const handleSaveButtonPress = () => {
+		saveSettingsData()
+	}
+	const handleClearStorage = () => {
+		clearStorage()
+	}
+	const handleGetAllData = () => {
+		data = getAllData()
+	}
 
 	useEffect(() => {
-		// Загружаем и сохраняем настройки при монтировании и обновлении компонента
-		loadSettings()
+		someAsyncFunction()
 	}, [])
-
-	useEffect(() => {
-		// Сохраняем настройки с использованием debounce
-		debouncedSaveSettings()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [workTime, restTime, bigRestTime, sessionCount])
 
 	return (
 		<View style={styles.container}>
+			<Button title='clear' onPress={handleClearStorage} />
+			<Button title='Save Settings' onPress={handleSaveButtonPress} />
+			<Button title='проверить сторедж' onPress={handleGetAllData} />
 			<View style={styles.container}>
 				<Text>{'Work time'}</Text>
 				<ScrollPicker
 					currentValue={workTime}
-					extraData={workTime}
+					initialNumToRender={5}
 					list={MOCK_DATA}
 					onItemPress={setWorkTime}
 					labelColor='blue'
@@ -102,7 +117,7 @@ export default function Settings() {
 				<Text>{'Rest time'}</Text>
 				<ScrollPicker
 					currentValue={restTime}
-					extraData={restTime}
+					initialNumToRender={5}
 					list={MOCK_DATA}
 					onItemPress={setRestTime}
 					labelColor='blue'
@@ -114,7 +129,7 @@ export default function Settings() {
 				<Text>{'Big rest time'}</Text>
 				<ScrollPicker
 					currentValue={bigRestTime}
-					extraData={bigRestTime}
+					initialNumToRender={5}
 					list={MOCK_DATA}
 					onItemPress={setBigRestTime}
 					labelColor='blue'
@@ -126,7 +141,7 @@ export default function Settings() {
 				<Text>{'Session Count'}</Text>
 				<ScrollPicker
 					currentValue={sessionCount}
-					extraData={sessionCount}
+					initialNumToRender={5}
 					list={MOCK_DATA2}
 					onItemPress={setSessionCount}
 					labelColor='blue'
