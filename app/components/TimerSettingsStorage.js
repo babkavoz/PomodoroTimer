@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-const storageKey = 'storagedata'
 
 export const getAllData = async () => {
 	try {
@@ -17,24 +16,13 @@ export const getAllData = async () => {
 	}
 }
 
-export const updateOrAppend = async settingsToSave => {
+export const setMultipleItems = async settingsToSave => {
 	try {
-		console.log(
-			'Функция updateOrAppend получила такие данные для записи:',
-			settingsToSave
-		)
-		// Получаем текущие данные из AsyncStorage
-		const allData = await getAllData()
-		console.log(
-			'Функция updateOrAppend получила такие данные из стореджа:',
-			allData
-		)
 		for (const { key, value } of settingsToSave) {
 			const stringValue = JSON.stringify(value)
 			await AsyncStorage.setItem(key, stringValue)
 			console.log('Записан ключ:', key, 'со значением:', stringValue)
 		}
-		return allData
 	} catch (error) {
 		console.error('Error updating or appending data:', error)
 		throw error
@@ -47,15 +35,6 @@ export const clearStorage = async () => {
 		console.log('AsyncStorage cleared successfully!')
 	} catch (error) {
 		console.error('Error clearing AsyncStorage:', error)
-		throw error
-	}
-}
-
-export const setMultipleItems = async settingsToSet => {
-	try {
-		updateOrAppend(settingsToSet)
-	} catch (error) {
-		console.error('Error setting multiple items:', error)
 		throw error
 	}
 }

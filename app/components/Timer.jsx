@@ -92,7 +92,7 @@ export default function Timer() {
 	}
 
 	const nextTime = () => {
-		if (isWorkTime) setTotalWorkTime(totalWorkTime + workTime)
+		if (isWorkTime) setTotalWorkTime(totalWorkTime + workTime * 60)
 		if (currentSession === sessionCount && !isWorkTime) {
 			setCurrentSession(1)
 		} else if (!isWorkTime) {
@@ -154,6 +154,7 @@ export default function Timer() {
 				<TouchableOpacity
 					onPress={async () => {
 						await loadSettingsData()
+						setTotalWorkTime(0)
 						setCurrentSession(1)
 						setIsWorkTime(true)
 						setIsPlaying(false)
