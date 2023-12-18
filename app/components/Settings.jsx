@@ -8,7 +8,7 @@ import {
 	getMultipleItems,
 	clearStorage,
 	getAllData
-} from './TimerSettingsStorage' // Замените на имя вашего файла с кодом
+} from './TimerSettingsStorage'
 
 const generateMockData = count => {
 	const mockData = []
@@ -35,18 +35,6 @@ export default function Settings() {
 	const [bigRestTime, setBigRestTime] = useState(5)
 	const [sessionCount, setSessionCount] = useState(5)
 
-	const someAsyncFunction = async () => {
-		try {
-			console.log('начало someAsyncFunction')
-			await loadSettingsData()
-			// Здесь будет выполнен код после завершения loadSettingsData
-			console.log('loadSettingsData выполнена')
-			// Другой код, который вы хотите выполнить после loadSettingsData
-		} catch (error) {
-			console.error('Произошла ошибка:', error)
-		}
-	}
-
 	const loadSettingsData = async () => {
 		try {
 			const timerSettings = await getMultipleItems([
@@ -68,6 +56,20 @@ export default function Settings() {
 		}
 	}
 
+	const handleSaveButtonPress = () => {
+		saveSettingsData()
+	}
+	const handleClearStorage = () => {
+		clearStorage()
+	}
+	const handleGetAllData = () => {
+		data = getAllData()
+	}
+
+	useEffect(() => {
+		loadSettingsData()
+	}, [])
+
 	const saveSettingsData = async () => {
 		try {
 			const settingsToSave = [
@@ -82,30 +84,18 @@ export default function Settings() {
 		}
 	}
 
-	const handleSaveButtonPress = () => {
-		saveSettingsData()
-	}
-	const handleClearStorage = () => {
-		clearStorage()
-	}
-	const handleGetAllData = () => {
-		data = getAllData()
-	}
-
 	useEffect(() => {
-		someAsyncFunction()
-	}, [])
+		saveSettingsData()
+	}, [workTime, restTime, bigRestTime, sessionCount])
 
 	return (
 		<View style={styles.container}>
 			<Button title='clear' onPress={handleClearStorage} />
-			<Button title='Save Settings' onPress={handleSaveButtonPress} />
 			<Button title='проверить сторедж' onPress={handleGetAllData} />
 			<View style={styles.container}>
 				<Text>{'Work time'}</Text>
 				<ScrollPicker
 					currentValue={workTime}
-					initialNumToRender={5}
 					list={MOCK_DATA}
 					onItemPress={setWorkTime}
 					labelColor='blue'
@@ -117,7 +107,6 @@ export default function Settings() {
 				<Text>{'Rest time'}</Text>
 				<ScrollPicker
 					currentValue={restTime}
-					initialNumToRender={5}
 					list={MOCK_DATA}
 					onItemPress={setRestTime}
 					labelColor='blue'
@@ -129,7 +118,6 @@ export default function Settings() {
 				<Text>{'Big rest time'}</Text>
 				<ScrollPicker
 					currentValue={bigRestTime}
-					initialNumToRender={5}
 					list={MOCK_DATA}
 					onItemPress={setBigRestTime}
 					labelColor='blue'
@@ -141,7 +129,6 @@ export default function Settings() {
 				<Text>{'Session Count'}</Text>
 				<ScrollPicker
 					currentValue={sessionCount}
-					initialNumToRender={5}
 					list={MOCK_DATA2}
 					onItemPress={setSessionCount}
 					labelColor='blue'

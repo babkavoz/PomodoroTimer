@@ -3,63 +3,68 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
-import {
-	getMultipleItemsFromStorage,
-	setTimerSettings
-} from './TimerSettingsStorage'
+import { setMultipleItems, getMultipleItems } from './TimerSettingsStorage'
 
 export default function Timer() {
 	const [workTime, setWorkTime] = useState(30)
 	const [restTime, setRestTime] = useState(5)
 	const [bigRestTime, setBigRestTime] = useState(15)
 	const [sessionCount, setSessionCount] = useState(5)
-	const [updateSettings, setUpdateSettings] = useState(0)
 
 	const [totalWorkTime, setTotalWorkTime] = useState(0)
 	const [isPlaying, setIsPlaying] = useState(false)
 	const [isWorkTime, setIsWorkTime] = useState(true)
 	const [currentSession, setCurrentSession] = useState(3)
-	/*
+
 	const loadSettingsData = async () => {
 		try {
-			const timerSettings = await loadSettings()
+			const timerSettings = await getMultipleItems([
+				'workTime',
+				'restTime',
+				'bigRestTime',
+				'sessionCount',
+				'totalWorkTime',
+				'isPlaying',
+				'isWorkTime',
+				'currentSession'
+			])
 
 			if (timerSettings) {
-				setWorkTime(timerSettings.workTime)
-				setRestTime(timerSettings.restTime)
-				setBigRestTime(timerSettings.bigRestTime)
-				setSessionCount(timerSettings.sessionCount)
-				setTotalWorkTime(timerSettings.totalWorkTime)
-				setIsPlaying(timerSettings.isPlaying)
-				setIsWorkTime(timerSettings.isWorkTime)
-				setCurrentSession(timerSettings.currentSession)
+				setWorkTime(timerSettings[0].value)
+				setRestTime(timerSettings[1].value)
+				setBigRestTime(timerSettings[2].value)
+				setSessionCount(timerSettings[3].value)
+				setTotalWorkTime(timerSettings[4].value)
+				setIsPlaying(timerSettings[5].value)
+				setIsWorkTime(timerSettings[6].value)
+				setCurrentSession(timerSettings[7].value)
 			}
 		} catch (error) {
 			console.error('[MY_APP] Error loading settings:', error)
 		}
 	}
 
-	const saveSettingsData = async () => {
-		try {
-			const settingsToSave = {
-				workTime,
-				restTime,
-				bigRestTime,
-				sessionCount,
-				totalWorkTime,
-				isPlaying,
-				isWorkTime,
-				currentSession
-			}
-			await saveSettings({ timerSettings: settingsToSave })
-		} catch (error) {
-			console.error('[MY_APP] Error saving settings:', error)
-		}
-	}
-
 	useEffect(() => {
 		loadSettingsData()
-	}, [updateSettings])
+	}, [])
+
+	const saveSettingsData = async () => {
+		try {
+			const settingsToSave = [
+				{ key: 'workTime', value: workTime },
+				{ key: 'restTime', value: restTime },
+				{ key: 'bigRestTime', value: bigRestTime },
+				{ key: 'sessionCount', value: sessionCount },
+				{ key: 'totalWorkTime', value: totalWorkTime },
+				{ key: 'isPlaying', value: isPlaying },
+				{ key: 'isWorkTime', value: isWorkTime },
+				{ key: 'currentSession', value: currentSession }
+			]
+			await setMultipleItems(settingsToSave)
+		} catch (error) {
+			console.error('Error saving timer settings:', error)
+		}
+	}
 
 	useEffect(() => {
 		saveSettingsData()
@@ -73,7 +78,7 @@ export default function Timer() {
 		isWorkTime,
 		currentSession
 	])
-	*/
+
 	const [key, setKey] = useState(0)
 
 	const chooseCircleStyle = (index, currentSession) => {
@@ -101,10 +106,6 @@ export default function Timer() {
 	return (
 		<View>
 			<View style={styles.container}>
-				<Button
-					title='Обновить'
-					onPress={() => setUpdateSettings(prev => prev + 1)}
-				/>
 				<Text>
 					{'Total Work time ' + Math.round(totalWorkTime / 60) + ' minutes'}
 				</Text>
@@ -115,10 +116,10 @@ export default function Timer() {
 					isPlaying={isPlaying}
 					duration={
 						isWorkTime
-							? workTime
+							? workTime * 60
 							: currentSession === sessionCount
-							? bigRestTime
-							: restTime
+							? bigRestTime * 60
+							: restTime * 60
 					}
 					colors={['#004777', '#F7B801', '#A30000', '#A30000']}
 					colorsTime={[7, 5, 2, 0]}
@@ -152,6 +153,7 @@ export default function Timer() {
 			<View style={styles.container}>
 				<TouchableOpacity
 					onPress={async () => {
+						await loadSettingsData()
 						setCurrentSession(1)
 						setIsWorkTime(true)
 						setIsPlaying(false)

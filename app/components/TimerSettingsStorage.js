@@ -34,23 +34,6 @@ export const updateOrAppend = async settingsToSave => {
 			await AsyncStorage.setItem(key, stringValue)
 			console.log('Записан ключ:', key, 'со значением:', stringValue)
 		}
-		/*
-		// Обновляем или добавляем новые данные
-		for (const { key, value } of settingsToSave) {
-			// Создаем временный объект с текущим ключом и значением
-			const tempData = { [key]: value }
-
-			// Объединяем временный объект с текущими данными
-			const updatedData = { ...allData, ...tempData }
-
-			// Преобразуем данные в строку перед сохранением
-			const stringifiedData = JSON.stringify(updatedData)
-
-			// Сохраняем обновленные данные в AsyncStorage
-			await AsyncStorage.setItem(storageKey, stringifiedData)
-
-			console.log('Записан ключ:', key, 'со значением:', value)
-		}*/
 		return allData
 	} catch (error) {
 		console.error('Error updating or appending data:', error)
