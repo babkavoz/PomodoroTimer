@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 import { setMultipleItems, getMultipleItems } from './TimerSettingsStorage'
+import { constants } from '../gstyles'
 
 export default function Timer() {
 	const [workTime, setWorkTime] = useState(30)
@@ -104,13 +105,13 @@ export default function Timer() {
 	}
 
 	return (
-		<View>
+		<View style={styles.screenContainer}>
 			<View style={styles.container}>
-				<Text>
+				<Text style={styles.mainText}>
 					{'Total Work time ' + Math.round(totalWorkTime / 60) + ' minutes'}
 				</Text>
 			</View>
-			<View style={styles.container}>
+			<View style={(styles.container, styles.timer)}>
 				<CountdownCircleTimer
 					key={key}
 					isPlaying={isPlaying}
@@ -127,6 +128,7 @@ export default function Timer() {
 					onComplete={() => {
 						nextTime()
 					}}
+					size={(450, 350)}
 				>
 					{({ remainingTime }) => {
 						let minutes = Math.floor(remainingTime / 60)
@@ -135,7 +137,7 @@ export default function Timer() {
 						seconds = seconds < 10 ? '0' + seconds : seconds
 						return (
 							<View>
-								<Text styles={styles.ClockText}>
+								<Text style={styles.clockText}>
 									{isWorkTime
 										? 'Work'
 										: currentSession === sessionCount
@@ -143,14 +145,14 @@ export default function Timer() {
 										: 'Rest'}
 								</Text>
 								<Text
-									styles={styles.ClockTimeText}
+									style={styles.ClockTimeText}
 								>{`${minutes}:${seconds}`}</Text>
 							</View>
 						)
 					}}
 				</CountdownCircleTimer>
 			</View>
-			<View style={styles.container}>
+			<View style={styles.rowContainer}>
 				<TouchableOpacity
 					onPress={async () => {
 						await loadSettingsData()
@@ -160,14 +162,17 @@ export default function Timer() {
 						setIsPlaying(false)
 					}}
 				>
-					<MaterialIcons name={'update'} size={50} color='black' />
+					<MaterialIcons name={'update'} size={50} color='white' />
 				</TouchableOpacity>
 
-				<TouchableOpacity onPress={() => setIsPlaying(!isPlaying)}>
+				<TouchableOpacity
+					onPress={() => setIsPlaying(!isPlaying)}
+					style={{ paddingHorizontal: 15 }}
+				>
 					<MaterialIcons
 						name={isPlaying ? 'play-arrow' : 'pause'}
 						size={50}
-						color='black'
+						color='white'
 					/>
 				</TouchableOpacity>
 				<TouchableOpacity
@@ -175,10 +180,10 @@ export default function Timer() {
 						nextTime()
 					}}
 				>
-					<MaterialIcons name={'arrow-forward-ios'} size={46} color='black' />
+					<MaterialIcons name={'arrow-forward-ios'} size={46} color='white' />
 				</TouchableOpacity>
 			</View>
-			<View style={styles.container}>
+			<View style={styles.rowContainer}>
 				{Array.from(Array(sessionCount)).map((_, index) => (
 					<View key={index} style={styles.itemContainer}>
 						<View style={chooseCircleStyle(index, currentSession)} />
@@ -190,18 +195,43 @@ export default function Timer() {
 }
 
 const styles = StyleSheet.create({
+	screenContainer: {
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+		backgroundColor: constants.primaryColor,
+		height: '100%'
+	},
 	container: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: constants.primaryColor,
+		marginTop: 5,
+		marginBottom: 35
+	},
+	rowContainer: {
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#fff'
+		backgroundColor: constants.primaryColor,
+		marginVertical: 15
 	},
-	ClockText: {},
-	ClockTimeText: {},
-	itemContainer: {
-		alignItems: 'center',
-		justifyContent: 'center'
+	mainText: {
+		color: 'white',
+		fontSize: 24,
+		alignSelf: 'center',
+		marginTop: 10
 	},
+	clockText: {
+		color: 'white',
+		fontSize: 40,
+		alignSelf: 'center'
+	},
+	ClockTimeText: {
+		color: 'white',
+		fontSize: 84,
+		marginBottom: 50
+	},
+
 	circle: {
 		width: 20,
 		height: 20,
@@ -215,6 +245,7 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		backgroundColor: 'red',
 		borderWidth: 2,
+		borderColor: 'white',
 		marginLeft: 5
 	},
 	circleNotReady: {

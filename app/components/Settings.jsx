@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar'
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native'
 import { ScrollPicker } from 'react-native-value-picker'
+import { constants } from '../gstyles'
 import {
 	setMultipleItems,
 	getMultipleItems,
@@ -90,48 +91,49 @@ export default function Settings() {
 
 	return (
 		<View style={styles.container}>
-			<Button title='clear' onPress={handleClearStorage} />
-			<Button title='проверить сторедж' onPress={handleGetAllData} />
-			<View style={styles.container}>
-				<Text>{'Work time'}</Text>
-				<ScrollPicker
-					currentValue={workTime}
-					list={MOCK_DATA}
-					onItemPress={setWorkTime}
-					labelColor='blue'
-					separatorColor='white'
-					selectedColor='red'
-				/>
+			<View style={styles.rowContainer}>
+				<View style={styles.container}>
+					<Text style={styles.textName}>{'Work time'}</Text>
+					<ScrollPicker
+						currentValue={workTime}
+						list={MOCK_DATA}
+						onItemPress={setWorkTime}
+						labelColor='white'
+						separatorColor='white'
+						selectedColor='red'
+					/>
+				</View>
+				<View style={styles.container}>
+					<Text style={styles.textName}>{'Rest time'}</Text>
+					<ScrollPicker
+						currentValue={restTime}
+						list={MOCK_DATA}
+						onItemPress={setRestTime}
+						labelColor='white'
+						separatorColor='white'
+						selectedColor='red'
+					/>
+				</View>
+				<View style={styles.container}>
+					<Text style={styles.textName}>{'Big rest time'}</Text>
+					<ScrollPicker
+						currentValue={bigRestTime}
+						list={MOCK_DATA}
+						onItemPress={setBigRestTime}
+						labelColor='white'
+						separatorColor='white'
+						selectedColor='red'
+					/>
+				</View>
 			</View>
+
 			<View style={styles.container}>
-				<Text>{'Rest time'}</Text>
-				<ScrollPicker
-					currentValue={restTime}
-					list={MOCK_DATA}
-					onItemPress={setRestTime}
-					labelColor='blue'
-					separatorColor='white'
-					selectedColor='red'
-				/>
-			</View>
-			<View style={styles.container}>
-				<Text>{'Big rest time'}</Text>
-				<ScrollPicker
-					currentValue={bigRestTime}
-					list={MOCK_DATA}
-					onItemPress={setBigRestTime}
-					labelColor='blue'
-					separatorColor='white'
-					selectedColor='red'
-				/>
-			</View>
-			<View style={styles.container}>
-				<Text>{'Session Count'}</Text>
+				<Text style={styles.textName}>{'Session Count'}</Text>
 				<ScrollPicker
 					currentValue={sessionCount}
 					list={MOCK_DATA2}
 					onItemPress={setSessionCount}
-					labelColor='blue'
+					labelColor='white'
 					separatorColor='white'
 					selectedColor='red'
 				/>
@@ -144,9 +146,20 @@ export default function Settings() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: constants.primaryColor,
 		alignItems: 'center',
-		justifyContent: 'center',
-		height: 500
+		justifyContent: 'center'
+	},
+	rowContainer: {
+		flex: 1,
+		flexDirection: 'row',
+		backgroundColor: constants.primaryColor,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	textName: {
+		color: 'white',
+		fontSize: 20,
+		alignSelf: 'center'
 	}
 })

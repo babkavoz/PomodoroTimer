@@ -4,17 +4,29 @@ import { MaterialIcons } from '@expo/vector-icons'
 
 import Main from './components/Main'
 import Settings from './components/Settings'
-import Account from './components/Account'
+import Notes from './components/Notes'
 
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
+import { constants } from './gstyles'
 
 const Stack = createStackNavigator()
 
 export default function Navigate() {
 	return (
 		<NavigationContainer>
-			<Stack.Navigator>
+			<Stack.Navigator
+				screenOptions={{
+					headerStyle: {
+						backgroundColor: constants.primaryColor,
+					},
+					headerTintColor: 'white', // Установите цвет текста в шапке
+					headerTitleAlign: 'center',
+					headerTitleStyle: {
+						fontWeight: 'bold'
+					}
+				}}
+			>
 				<Stack.Screen
 					name='Main'
 					component={Main}
@@ -24,22 +36,20 @@ export default function Navigate() {
 							<TouchableOpacity
 								style={styles.iconButton}
 								onPress={() => {
-									console.log('Settings button pressed!')
 									navigation.navigate('Settings')
 								}}
 							>
-								<MaterialIcons name='settings' size={24} color='black' />
+								<MaterialIcons name='settings' size={24} color='white' />
 							</TouchableOpacity>
 						),
 						headerLeft: () => (
 							<TouchableOpacity
 								style={styles.iconButton}
 								onPress={() => {
-									console.log('Account button pressed!')
-									navigation.navigate('Account')
+									navigation.navigate('Notes')
 								}}
 							>
-								<MaterialIcons name='person' size={24} color='black' />
+								<MaterialIcons name='assignment' size={24} color='white' />
 							</TouchableOpacity>
 						)
 					})}
@@ -50,9 +60,9 @@ export default function Navigate() {
 					options={{ title: 'Настройки' }}
 				/>
 				<Stack.Screen
-					name='Account'
-					component={Account}
-					options={{ title: 'Аккаунт' }}
+					name='Notes'
+					component={Notes}
+					options={{ title: 'Notes' }}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>
@@ -60,6 +70,10 @@ export default function Navigate() {
 }
 
 const styles = StyleSheet.create({
+	header: {
+		backgroundColor: 'red',
+		color: 'red'
+	},
 	iconButton: {
 		padding: 10
 	}
