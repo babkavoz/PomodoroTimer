@@ -16,6 +16,16 @@ export const getAllData = async () => {
 	}
 }
 
+export const clearStorage = async () => {
+	try {
+		await AsyncStorage.clear()
+		console.log('AsyncStorage cleared successfully!')
+	} catch (error) {
+		console.error('Error clearing AsyncStorage:', error)
+		throw error
+	}
+}
+
 export const setMultipleItems = async settingsToSave => {
 	try {
 		for (const { key, value } of settingsToSave) {
@@ -25,16 +35,6 @@ export const setMultipleItems = async settingsToSave => {
 		}
 	} catch (error) {
 		console.error('Error updating or appending data:', error)
-		throw error
-	}
-}
-
-export const clearStorage = async () => {
-	try {
-		await AsyncStorage.clear()
-		console.log('AsyncStorage cleared successfully!')
-	} catch (error) {
-		console.error('Error clearing AsyncStorage:', error)
 		throw error
 	}
 }

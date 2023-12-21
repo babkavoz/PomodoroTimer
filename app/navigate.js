@@ -18,7 +18,7 @@ export default function Navigate() {
 			<Stack.Navigator
 				screenOptions={{
 					headerStyle: {
-						backgroundColor: constants.primaryColor,
+						backgroundColor: constants.primaryColor
 					},
 					headerTintColor: 'white', // Установите цвет текста в шапке
 					headerTitleAlign: 'center',
@@ -31,7 +31,7 @@ export default function Navigate() {
 					name='Main'
 					component={Main}
 					options={({ navigation }) => ({
-						title: 'Главная',
+						title: 'Timer',
 						headerRight: () => (
 							<TouchableOpacity
 								style={styles.iconButton}
@@ -57,7 +57,7 @@ export default function Navigate() {
 				<Stack.Screen
 					name='Settings'
 					component={Settings}
-					options={{ title: 'Настройки' }}
+					options={{ title: 'Settings' }}
 				/>
 				<Stack.Screen
 					name='Notes'

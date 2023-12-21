@@ -6,7 +6,7 @@ export default function Form({ addHandler }) {
 	const [text, setText] = useState('')
 
 	const onChange = text => {
-		setText(text.trim())
+		setText(text)
 	}
 
 	const handleAdd = () => {
